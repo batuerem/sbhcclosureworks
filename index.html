@@ -945,7 +945,7 @@ R.overview = el => {
     <div class="sumcard"><h3>📷 Before and after</h3><p><b>${S.filter(s => phOf(s.id).progress.length).length}</b> scopes with progress photos · <b>${S.filter(s => s.status === 'Reported complete' && !phOf(s.id).progress.length).length}</b> reported complete with no photo</p><a data-go="photos" href="#photos">Open photos →</a></div>
     <div class="sumcard"><h3>📦 Procurement</h3><p><b>${P.filter(p => ['ordered', 'arriving'].includes(p.cat)).length}</b> on order · <b>${P.filter(p => ['todo', 'blank'].includes(p.cat) && p.sow !== '02').length}</b> to order · FF&amp;E: <b>14</b> lines open, <b>0</b> with a PO</p><a data-go="procurement" href="#procurement">Open procurement →</a></div>
     <div class="sumcard"><h3>👷 Manning</h3><p>Baynes: two invoices paid at 50% · no roster since 25 Sept</p><a data-go="manning" href="#manning">Open manning →</a></div>
-    <div class="sumcard"><h3>✅ Actions</h3><p><b>${ACTS.length}</b> actions from the 1 and 2 Oct calls · <b>${ACTS.filter(a => a[2] === 'done').length}</b> done · <b>${ACTS.filter(a => a[2] === 'today').length}</b> due today</p><a data-go="actions" href="#actions">Open actions →</a></div>
+    <div class="sumcard"><h3>✅ Actions</h3><p><b>${ACTS.filter(a => a[2] !== 'done').length}</b> of <b>${ACTS.length}</b> open since 26 Sept · <b>${ACTS.filter(a => a[2] !== 'done' && a[4] <= '2026-09-30').length}</b> open 2 days or more</p><a data-go="actions" href="#actions">Open actions →</a></div>
   </div>
   <p style="font-size:14.5px"><b>13</b> days to the hard opening, <b>${M.wd}</b> working days to completion. Rows in the scope, programme and procurement tables open for detail.</p>`;
 };
@@ -1251,46 +1251,73 @@ R.manning = el => {
 };
 
 /* ================= ACTIONS ================= */
-const ACTS = [
-  ['Bob, Juliana', 'Walk-through; sign off the scopes reported complete', 'done', '30 Sept: 10 signed off, 6 sent back. Summary sent 1 Oct.'],
-  ['Bernard', 'Completion dates for open items; date for the follow-up walk-through', 'today', 'Bob, 2 Oct 06:27.'],
-  ['Bernard', 'Finish dates for reopened SOW 04, 08, 18, 19, 25, 37', 'none', ''],
-  ['Afeisha, Bernard', 'Zero visible rubble, stones and construction waste', 'today', 'By 16:00 on 2 Oct.'],
-  ['Bernard', 'Walkways: % complete, what remains, completion date', 'today', 'By 17:00. Baynes told Bob "next week".'],
-  ['Bernard', 'Thatch umbrellas: total, perfect, in works, date for 100%', 'late', 'Asked 1 Oct; due 17:00 on 2 Oct.'],
-  ['Bernard, Monique', 'Terrace bench and wall handover; terrace guest ready', 'today', 'Handover 14:30, Monique 15:00, guest ready 16:00.'],
-  ['Monique', 'Terrace beach complete; photo of 5 umbrellas with 5 daybed sets', 'today', 'Photo 16:00; beach 17:00.'],
-  ['Monique', 'Health Club photos and handover', 'today', 'Photos 14:30, handover 15:00. Was due 13:00 on 1 Oct.'],
-  ['Monique, Afeisha', 'Photo and thumbs up: public washrooms, Boutique', 'done', 'Confirmed in the Soho Eyes group, 2 Oct.'],
-  ['Bernard', 'Deli operations ready', 'next', 'Sat 3 Oct, 17:00. Was due 1 Oct.'],
-  ['Bernard', 'Beach Bar operations ready', 'next', 'Sat 3 Oct, 17:00.'],
-  ['Bernard', 'Activities hut operations ready', 'none', 'Mon 5 Oct, 17:00. Not started.'],
-  ['Bernard', 'Jetty sanding and varnishing: start date', 'none', 'Not started. Stepper on the lights.'],
-  ['Monique', 'Rooms: count with numbers', 'done', '7 of 40 on 2 Oct: 15, 20, 30 to 34.'],
-  ['Monique, Bernard', 'Plan to 40 of 40 rooms with a calendar; send Batu the invite', 'next', 'Call Tue 6 Oct, 07:00.'],
-  ['Monique', 'Back of house tank: daily reading until 90%', 'today', '53% on 2 Oct.'],
-  ['Bernard', 'Pizza oven control panel: parts quote, copy Batu, Bob, Joseph', 'today', 'No pizza oven until about the third week of October.'],
-  ['Neville', 'Cheney Brothers dry order: arrival date', 'done', 'Container ETA Canouan 9 Oct.'],
-  ['Neville', 'FedEx: pizza oven extractor part and room keys', 'part', 'Part ETA 8 Oct; keys ETA to be confirmed.'],
-  ['Afeisha, Neville', 'Proper key tags (no paper stickers)', 'none', 'Raised 30 Sept and 1 Oct.'],
-  ['Afeisha, Peter', 'Team schedule from 5 Oct', 'late', 'F&B missing; Peter to submit 2 Oct.'],
-  ['Alexis, Peter, Akil', 'Menu training with the team, Afeisha involved', 'today', 'Notes from the 1 Oct service.'],
-  ['Jodaul', 'Menus to the team; Micros open-item brief in writing', 'done', 'Final menus sent 1 Oct 04:52.'],
-  ['Monique', 'Mini-bar snacks', 'none', 'Batu asked MOCAN to help (1 Oct).'],
-  ['Juliana', 'FF&E update: August against now, with parts, ETAs and service', 'next', 'Due Mon 5 Oct.'],
-  ['Juliana', 'One report a day in the master workbook, with a % per scope', 'no', 'Nothing since 29 Sept. Still reports "≈61%".'],
-  ['Kirill, Bob', 'Reconcile the two Baynes invoices against the contract', 'none', 'XCD 10,112.37 and 14,850.00 paid at 50%.'],
-  ['Cristian', 'Tecnoeasy open items and written handover', 'none', 'List sent 1 Oct.'],
-  ['Alexis, Afeisha', 'Ownership feedback from lunch in the Soho group', 'today', '2 Oct.'],
-  ['Jodaul, Alexis', 'Guest route ready for the travel agent inspection', 'next', 'Sun 4 Oct, 17:00.'],
-  ['Decided', 'Soft opening 1 Oct; hard opening 15 Oct', 'done', ''],
-  ['Decided', 'An area is guest ready only when Monique confirms it', 'done', '2 Oct call.']];
+const TODAY = '2026-10-02';
+const ACTS = [ // [owner, action, status, note, raised (yyyy-mm-dd), source]
+  // 26 Sept call
+  ['Juliana', 'One report a day in the master workbook, with a % for every scope, by 19:00', 'no', 'Nothing since 29 Sept. Still reports "≈61%" (units completed and supervisor\'s opinion).', '2026-09-26', '26 Sept call'],
+  ['Juliana', 'Before photos and team names on SOW 45, 46, 47', 'none', 'SOW 46 and 47 started without before photos.', '2026-09-26', '26 Sept call'],
+  ['Bernard', 'Roster, Contractors and Crew load every morning, from the signed sheet', 'no', 'No roster or signed sheet since 25 Sept.', '2026-09-26', '26 Sept call'],
+  ['Bernard', 'Email the senior team: handover date per area and areas still worked on to 16 Oct', 'none', 'Partly covered by dates given on the 1 and 2 Oct calls; no email.', '2026-09-26', '26 Sept call'],
+  ['Bernard', 'Baynes: the extra men for the umbrella thatch', 'part', 'Thatch in progress; Baynes short of men (1 Oct).', '2026-09-26', '26 Sept call'],
+  ['Bob, Juliana', 'Walk-through; sign off the scopes reported complete', 'done', '30 Sept: 10 signed off, 6 sent back. Summary sent 1 Oct.', '2026-09-26', '26 Sept call'],
+  // 29 Sept call
+  ['Bernard', 'Show Bob the roof leaks at the front office and restaurant; patch when dry', 'none', 'Not reported fixed.', '2026-09-29', '29 Sept call'],
+  ['Bernard', 'Bamboo curtains, Beach Bar and Activities hut: sizes and photos to Joseph', 'none', '', '2026-09-29', '29 Sept call'],
+  ['Bernard', 'Plan for the gravel road', 'none', 'Was due Thu 1 Oct.', '2026-09-29', '29 Sept call'],
+  ['Jodaul', 'Wellness panel: insurer; Tecnoeasy report date and cost', 'none', 'Gym panel now in customs.', '2026-09-29', '29 Sept call'],
+  ['Alexis', 'Record every person sent from the Estate and for how long', 'none', 'For cross-charging.', '2026-09-29', '29 Sept call'],
+  ['Monique', 'Mini-bar snacks', 'none', 'MOCAN asked to help (1 Oct).', '2026-09-29', '29 Sept call'],
+  ['Jodaul', 'Micros output, final menus in PDF and DOCX, matching 100%', 'done', 'Final menus sent 1 Oct 04:52.', '2026-09-29', '29 Sept call'],
+  ['Bernard, Juliana', 'FF&E list with status: fridges, stoves, appliances, parts', 'done', 'Received 30 Sept; brief not met. Update due 5 Oct (below).', '2026-09-29', '29 Sept call'],
+  // 30 Sept on-site meeting and emails
+  ['Bernard', 'Jetty sanding and sealing', 'none', 'Not started. Stepper on the lights.', '2026-09-30', '30 Sept meeting'],
+  ['Bernard', 'Thatch umbrellas complete', 'late', 'Was due Fri 2 Oct. Count due 17:00 on 2 Oct.', '2026-09-30', '30 Sept meeting'],
+  ['Bernard, Jodaul', 'Tecnoeasy: jetty lights, septic, range hood, written handover', 'part', 'Range hood and septic checked; handover not received. List sent to Cristian 1 Oct.', '2026-09-30', '30 Sept meeting'],
+  ['Afeisha, Neville', 'Proper key tags (no paper stickers)', 'none', 'Raised again 1 Oct.', '2026-09-30', '30 Sept meeting'],
+  ['Neville', 'Cheney Brothers dry order: arrival date', 'done', 'Container ETA Canouan 9 Oct.', '2026-09-30', '30 Sept meeting'],
+  ['Neville', 'FedEx: pizza oven extractor part and room keys', 'part', 'Part ETA 8 Oct; keys ETA to be confirmed.', '2026-09-30', '30 Sept meeting'],
+  ['Mark, Monique', 'Tank above 90%; irrigation fix', 'part', '53% on 2 Oct; irrigation valve with Tecnoeasy 20 Oct.', '2026-09-30', '30 Sept meeting'],
+  ['Juliana, Elvis', 'FF&E: walk every unit; parts, PO, supplier, ETA, date checked; add the Deli', 'next', 'Due Mon 5 Oct.', '2026-09-30', 'FF&E email'],
+  ['Juliana', 'SOW 21, 24, 34: close the open equipment or change the status back', 'none', 'Signed off on 30 Sept with equipment still open.', '2026-09-30', 'FF&E email'],
+  ['Joseph', 'Open FF&E parts onto the procurement list with PO and ETA', 'part', 'Agreed 30 Sept.', '2026-09-30', 'FF&E email'],
+  // 1 Oct call
+  ['Bernard', 'Walkways: how far today; finish date', 'late', '% and date now due 17:00 on 2 Oct. Baynes told Bob "next week".', '2026-10-01', '1 Oct call'],
+  ['Bernard', 'Construction waste removed (Baynes contract)', 'late', 'Still visible 2 Oct; zero by 16:00 on 2 Oct.', '2026-10-01', '1 Oct call'],
+  ['Bernard', 'Beach Bar and Activities hut target dates', 'done', 'Beach Bar Sat 3 Oct; Activities hut Mon 5 Oct.', '2026-10-01', '1 Oct call'],
+  ['Bernard', 'Back of house tank reading', 'done', '53% on 2 Oct.', '2026-10-01', '1 Oct call'],
+  ['Monique', 'Room count with room numbers', 'done', '7 of 40: 15, 20, 30 to 34.', '2026-10-01', '1 Oct call'],
+  ['Monique, Bernard', 'Block 1 rooms 1 and 7 or 8 ready for the 2 Oct arrival', 'part', 'Prepared, not snagged; exterior paint and stair varnish open.', '2026-10-01', '1 Oct call'],
+  ['Afeisha', 'Team schedule from Mon 5 Oct, by Fri 2 Oct evening', 'late', 'F&B missing; Peter to submit 2 Oct.', '2026-10-01', '1 Oct call'],
+  ['Jodaul', 'Micros open items: written brief for the cashier', 'none', '', '2026-10-01', '1 Oct call'],
+  ['Neville, Joseph', 'Critical Cheney Brothers items listed with quantities', 'done', 'Stock covers low occupancy (Neville, 1 Oct).', '2026-10-01', '1 Oct call'],
+  ['Cristian', 'Tecnoeasy open items and written handover', 'none', 'List sent 1 Oct.', '2026-10-01', 'Batu email'],
+  ['Kirill, Bob', 'Reconcile the two Baynes invoices against the contract', 'none', 'XCD 10,112.37 and 14,850.00 paid at 50%.', '2026-10-01', 'Kirill email'],
+  // 2 Oct call and emails
+  ['Bernard', 'Completion dates for open items; date for the follow-up walk-through', 'today', 'Bob, 06:27.', '2026-10-02', 'Bob email'],
+  ['Bernard', 'Finish dates for reopened SOW 04, 08, 18, 19, 25, 37', 'none', '', '2026-10-02', 'Inspection summary'],
+  ['Afeisha, Bernard', 'Zero visible rubble, stones and construction waste', 'today', 'By 16:00.', '2026-10-02', '2 Oct call'],
+  ['Bernard', 'Walkways: % complete, what remains, completion date', 'today', 'By 17:00.', '2026-10-02', '2 Oct call'],
+  ['Bernard', 'Thatch umbrellas: total, perfect, in works, date for 100%', 'today', 'By 17:00.', '2026-10-02', '2 Oct call'],
+  ['Bernard, Monique', 'Terrace bench and wall handover; terrace guest ready', 'today', 'Handover 14:30, Monique 15:00, guest ready 16:00.', '2026-10-02', '2 Oct call'],
+  ['Monique', 'Terrace beach complete; photo of 5 umbrellas with 5 daybed sets', 'today', 'Photo 16:00; beach 17:00.', '2026-10-02', '2 Oct call'],
+  ['Monique', 'Health Club photos and handover', 'today', 'Photos 14:30, handover 15:00. Was due 13:00 on 1 Oct.', '2026-10-02', '2 Oct call'],
+  ['Monique, Afeisha', 'Photo and thumbs up: public washrooms, Boutique', 'done', 'Confirmed in the Soho Eyes group.', '2026-10-02', '2 Oct call'],
+  ['Bernard', 'Deli operations ready', 'next', 'Sat 3 Oct, 17:00. Was due 1 Oct.', '2026-10-02', '2 Oct call'],
+  ['Bernard', 'Beach Bar operations ready', 'next', 'Sat 3 Oct, 17:00.', '2026-10-02', '2 Oct call'],
+  ['Bernard', 'Activities hut operations ready', 'none', 'Mon 5 Oct, 17:00. Not started.', '2026-10-02', '2 Oct call'],
+  ['Monique', 'Back of house tank: daily reading until 90%', 'today', '53% on 2 Oct.', '2026-10-02', '2 Oct call'],
+  ['Monique, Bernard', 'Plan to 40 of 40 rooms; send Batu the invite', 'next', 'Call Tue 6 Oct, 07:00.', '2026-10-02', '2 Oct call'],
+  ['Bernard', 'Pizza oven control panel: parts quote, copy Batu, Bob, Joseph', 'today', 'No pizza oven until about the third week of October.', '2026-10-02', '2 Oct call'],
+  ['Alexis, Peter, Akil', 'Menu training with the team, Afeisha involved', 'today', 'Notes from the 1 Oct service.', '2026-10-02', '2 Oct call'],
+  ['Alexis, Afeisha', 'Ownership feedback from lunch in the Soho group', 'today', '', '2026-10-02', '2 Oct call'],
+  ['Jodaul, Alexis', 'Guest route ready for the travel agent inspection', 'next', 'Sun 4 Oct, 17:00.', '2026-10-02', '2 Oct call']];
 R.actions = el => {
   const ST = { done: ['p-done', 'Done'], recv: ['p-done', 'Received'], part: ['p-pend', 'Partly'], late: ['p-pend', 'Late'], today: ['p-ip', 'Due today'], next: ['p-ip', 'Tomorrow'], no: ['p-bad', 'Not done'], none: ['p-ns', 'No news'] };
+  const DAYS = [...new Set(ACTS.map(x => x[4]))].sort().reverse();
+  const age = d => Math.round((new Date(TODAY) - new Date(d)) / 864e5);
   const st = k => `<span class="pill ${ST[k][0]}" style="font-size:12px;padding:2px 8px">${ST[k][1]}</span>`;
   el.innerHTML = `
-  <div class="two">
-    <div class="card"><h3>Open blockers</h3><ul class="dots">
+  <div class="card"><h3>Open blockers</h3><ul class="dots">
       <li class="r"><b>Rooms.</b> 7 of 40 guest ready; arrivals placed in Block 1 rooms not yet snagged. Plan to 40 of 40 at the 07:00 call on Tue 6 Oct. <span class="who">Monique, Bernard</span></li>
       <li class="r"><b>Walkways and waste.</b> Finish "next week" with no % or date yet; construction waste still visible on 2 Oct morning. <span class="who">Bernard, Baynes</span></li>
       <li class="r"><b>Signed off, not finished.</b> SOW 21, 24, 34 signed off with equipment still out; 6 scopes reported complete were not. <span class="who">Juliana, Bob</span></li>
@@ -1300,10 +1327,15 @@ R.actions = el => {
       <li class="a"><b>Baynes cost.</b> Two invoices paid at 50%; reconcile against the USD 11,000 contract. <span class="who">Kirill, Bob</span></li>
       <li class="a"><b>Water.</b> Tank at 53%; irrigation valve on 20 Oct. <span class="who">Mark, Monique</span></li>
     </ul></div>
-    <div class="card"><h3>Actions from the 30 Sept, 1 Oct and 2 Oct meetings, status at 2 Oct 13:00</h3><ul class="plain">
-      ${ACTS.map(([w, a, k, n]) => `<li>${st(k)} <b>${esc(a)}</b>${n ? ` <span class="muted">${esc(n)}</span>` : ''} <span class="who">${w}</span></li>`).join('')}
-    </ul></div>
-  </div>
+  <h2 style="margin-top:14px">Actions by day raised</h2>
+  <p class="lead">Every action from the calls and emails since 26 Sept, grouped by the day it was raised, newest first. Age is days since it was raised, to ${fd(TODAY)}. Open means anything not done.</p>
+  <div class="card"><h3>Aging summary</h3><div style="overflow-x:auto"><table class="vt"><thead><tr><th>Raised</th><th>Source</th><th class="r">Actions</th><th class="r">Done</th><th class="r">Open</th><th class="r">Not done or no news</th><th class="r">Age, days</th></tr></thead><tbody>
+    ${DAYS.map(d => { const L = ACTS.filter(x => x[4] === d), op = L.filter(x => x[2] !== 'done'), bad = L.filter(x => ['no', 'none', 'late'].includes(x[2])); return `<tr><td><b>${fd(d)}</b></td><td>${esc([...new Set(L.map(x => x[5]))].join(', '))}</td><td class="r">${L.length}</td><td class="r">${L.length - op.length}</td><td class="r" style="font-weight:600;color:${op.length ? 'var(--bad)' : 'var(--done)'}">${op.length}</td><td class="r">${bad.length}</td><td class="r">${age(d)}</td></tr>`; }).join('')}
+    <tr><td><b>Total</b></td><td></td><td class="r"><b>${ACTS.length}</b></td><td class="r"><b>${ACTS.filter(x => x[2] === 'done').length}</b></td><td class="r"><b>${ACTS.filter(x => x[2] !== 'done').length}</b></td><td class="r"><b>${ACTS.filter(x => ['no', 'none', 'late'].includes(x[2])).length}</b></td><td></td></tr>
+  </tbody></table></div></div>
+  ${DAYS.map(d => { const L = ACTS.filter(x => x[4] === d).sort((p, q) => (p[2] === 'done') - (q[2] === 'done')), op = L.filter(x => x[2] !== 'done').length; return `<div class="card"><div style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 16px;align-items:baseline"><h3>Raised ${fd(d)} · ${esc([...new Set(L.map(x => x[5]))].join(', '))}</h3><span class="faint">${op} of ${L.length} open · ${age(d) === 0 ? 'raised today' : age(d) + (age(d) === 1 ? ' day old' : ' days old')}</span></div><ul class="plain">
+      ${L.map(([w, a, k, n]) => `<li>${st(k)} ${k !== 'done' && age(d) >= 2 ? `<span class="pill p-bad" style="font-size:12px;padding:2px 8px">${age(d)} days</span> ` : ''}<b>${esc(a)}</b>${n ? ` <span class="muted">${esc(n)}</span>` : ''} <span class="who">${w}</span></li>`).join('')}
+    </ul></div>`; }).join('')}
   <div class="card"><h3>From the calls and the emails, 30 September to 2 October</h3><ul class="dots">
     <li class="g"><b>Neville, 30 Sept 17:00:</b> Cheney Brothers container ETA 9 Oct; potatoes in; pizza oven part ETA 8 Oct; keys to be confirmed. <span class="who">Neville</span></li>
     <li class="g"><b>Jodaul, 1 Oct 04:52:</b> final menus in Word and PDF, checked against Micros. <span class="who">Jodaul</span></li>
